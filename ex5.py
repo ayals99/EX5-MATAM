@@ -16,8 +16,6 @@ class TestCeaserShift(unittest.TestCase):
 # Part 1:
 class CaesarCipher:
     def __init__(self, keyInput):
-        if not isinstance(keyInput, str):
-            raise TypeError
         CaesarCipher.key = keyInput
 
     # def encrypt(self, stringToEncrypt):
@@ -30,18 +28,18 @@ class CaesarCipher:
     
 
 class VigenereCipher:
-    def __init__(self, keyList):
-        self.keyList = keyList
+    def __init__(self, listOfNumbers):
+        self.keyList = listOfNumbers
 
     # def encrypt(self, stringToEncrypt):
-    #     encryptedString = "a"
+    #     encryptedString = for all letters in stringToEncrypt and for all numbers in self.keyList, letter = shift(letter, number) 
     #     return encryptedString
     
     # def decrypt(self, encryptedString):
-    #     decryptedString = "a"
+    #     decryptedString = for all letters in stringToEncrypt and for all numbers in self.keyList, letter = shift(letter, -1*number) 
     #     return decryptedString
     
 # Part 2:
 def getVigenereFromStr(key):
-    # keyList = [for all letters in key, letter -= 'a']
+    # keyList = [for all letters in key, if letter is a char, then letter -= 'a']
     # return keyList
