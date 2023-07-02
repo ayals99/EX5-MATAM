@@ -46,19 +46,30 @@ class CaesarCipher:
 class VigenereCipher:
     def __init__(self, listOfNumbers):
         self.keyList = listOfNumbers
+        self.amountOfKeys = len(listOfNumbers)
 
-    # def encrypt(self, stringToEncrypt):
-    #     encryptedString = for all letters in stringToEncrypt and for all numbers in self.keyList, letter = shift(letter, number) 
-    #     return encryptedString
+    def encrypt(self, stringToEncrypt):
+        encryptedString = ""
+        indexInList = 0
+        for character in stringToEncrypt:
+            encryptedString += shift(character, self.keyList[indexInList])
+            if character.isalpa:
+                indexInList = (self.keyList + 1) % self.amountOfKeys
+        return encryptedString
     
-    # def decrypt(self, encryptedString):
-    #     decryptedString = for all letters in stringToEncrypt and for all numbers in self.keyList, letter = shift(letter, -1*number) 
-    #     return decryptedString
+    def decrypt(self, encryptedString):
+        reverseCypher = VigenereCipher([-1*key for key in self.keyList])
+        return reverseCypher.encrypt(encryptedString)
     
 # Part 2:
 def getVigenereFromStr(key):
-    # keyList = [for all letters in key, if letter is a char, then letter -= 'a']
-    # return keyList
-
+    keyIntList = []
+    for character in key:
+        base = ""
+        if character.isupper:
+            base = "A"
+        if character.islower:
+            base = "a"
+    keyIntList.append( (ord(character) - ord(base) ) % alphabetSize)
 
 def loadEncryptionSystem(dir_path):
