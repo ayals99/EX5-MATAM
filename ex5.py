@@ -13,19 +13,36 @@ import sys
 #         self.assertEqual()
 
 # Part 1:
+lowerCaseList = "abcdefghijklmnopqrstuvwxyz"
+alphabetSize = len(lowerCaseList)
+
+def shift(letter, shiftAmount):
+    if not(letter.isalpha):
+        return letter
+    alphabet = lowerCaseList
+    if letter.isupper:
+        isUpper = True
+        alphabet = lowerCaseList.upper
+    else:
+        isUpper = False
+    shiftedLetterIndex = (alphabet.find(letter) + shiftAmount) % alphabetSize
+    return alphabet[shiftedLetterIndex]
+    
+
 class CaesarCipher:
     def __init__(self, keyInput):
         CaesarCipher.key = keyInput
 
-    # def encrypt(self, stringToEncrypt):
-    #     encryptedString = for all letters in stringToEncrypt, (letter += key) % alphabetSize
-    #     return encryptedString
+    def encrypt(self, stringToEncrypt):
+        encryptedString = ""
+        for character in stringToEncrypt:
+            encryptedString += shift(character)
+        return encryptedString
 
-    # def decrypt(self, encryptedString):
-    #     decryptedString = for all letters in stringToEncrypt, (letter -= key) % alphabetSize
-    #     return decryptedString
+    def decrypt(self, encryptedString):
+        reverseCypher = CaesarCipher(-1 * self.key) 
+        return reverseCypher.encrypt(encryptedString) #use encryt in order to not duplicate code 
     
-
 class VigenereCipher:
     def __init__(self, listOfNumbers):
         self.keyList = listOfNumbers
