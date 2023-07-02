@@ -1,7 +1,7 @@
 
 import os
 import sys
-
+import json
 
 # import unittest
 # class TestCeaserShift(unittest.TestCase):
@@ -76,4 +76,48 @@ def getVigenereFromStr(key):
         keyIntList.append( (ord(character) - ord(base) ) % alphabetSize)
 
 
+def createDictionary(listOfFiles, dir_path):
+    for file in listOfFiles:
+        if file.endswith(".json"):
+            fileName = os.path.join(dir_path, file)
+            with open(fileName, 'r') as JSONfile:
+                loaded_dict = json.load(JSONfile)
+                return loaded_dict
+
+def createEncryptor(dictionary):
+    if dictionary["type"] == "Vigenere":
+        return VigenereCipher(dictionary["key"])
+    if dictionary["type"] == "Ceaser":
+        return CaesarCipher(dictionary["key"])
+    
+def isEncryptOn(dictionary):
+    if dictionary["encrypt"] == "True":
+        return True
+    else:
+        return False
+
+def encryptFile(fileToEncrypt, encryptBool, encryptionFunction, outFile):
+    for line in fileToEncrypt:
+        if(encryptBool == True):
+            outFile += encryptionFunction.encrypt(line)
+        else:
+            outFile += encryptionFunction.decrypt(line)
+
 def loadEncryptionSystem(dir_path):
+    listOfFiles = os.listdir(dir_path)
+    dictionary = createDictionary(listOfFiles, dir_path)
+    
+    encryptBool = isEncryptOn(dictionary)
+    encryptionFunction = createEncryptor(dictionary)
+
+    for file in listOfFiles:
+        fileName = os.path.join(dir_path, file)
+        if (fileName.endswith(".enc")):
+            with open(fileName, 'r') as fileToEncrypt:
+                with open(os.path.join(dir_path, fileName.os.path.splitext()  ,".txt"), 'w+') as outFile:
+                    encryptFile(fileToEncrypt, encryptBool, encryptionFunction, outFile)
+        
+        if (fileName.endswith(".txt")):
+            with open(fileName, 'r') as fileTo:
+                with open(os.path.join(dir_path), 'w+') as outFile:
+                    encryptFile(fileToEncrypt, encryptBool, encryptionFunction, outFile)
