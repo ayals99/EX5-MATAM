@@ -3,15 +3,14 @@ import os
 import sys
 
 
-import unittest
-class TestCeaserShift(unittest.TestCase):
-    def testLowerCase(self):
-        caesar1 = CaesarCipher('abc', 3,)
-        self.assertEqual(caesar1.encrypt, "cde", "Should be 'cde'")
+# import unittest
+# class TestCeaserShift(unittest.TestCase):
+#     def testLowerCase(self):
+#         caesar1 = CaesarCipher('abc', 3,)
+#         self.assertEqual(caesar1.encrypt, "cde", "Should be 'cde'")
 
-    def testTupleLowerCase(self):
-        self.assertEqual()
-
+#     def testTupleLowerCase(self):
+#         self.assertEqual()
 
 # Part 1:
 class CaesarCipher:
@@ -43,3 +42,6 @@ class VigenereCipher:
 def getVigenereFromStr(key):
     # keyList = [for all letters in key, if letter is a char, then letter -= 'a']
     # return keyList
+
+
+def loadEncryptionSystem(dir_path):
