@@ -59,17 +59,21 @@ class VigenereCipher:
     
     def decrypt(self, encryptedString):
         reverseCypher = VigenereCipher([-1*key for key in self.keyList])
-        return reverseCypher.encrypt(encryptedString)
+        return reverseCypher.encrypt(encryptedString) # in order to avoid code duplication
     
 # Part 2:
 def getVigenereFromStr(key):
     keyIntList = []
     for character in key:
+        if not character.isalpha:
+            continue
+        #assuming character is an uppercase of lowercase letter
         base = ""
         if character.isupper:
             base = "A"
         if character.islower:
             base = "a"
-    keyIntList.append( (ord(character) - ord(base) ) % alphabetSize)
+        keyIntList.append( (ord(character) - ord(base) ) % alphabetSize)
+
 
 def loadEncryptionSystem(dir_path):
