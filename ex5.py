@@ -82,14 +82,14 @@ def createDictionary(listOfFiles, dir_path):
                 return loaded_dict
 
 def createEncryptorInstance(dictionary):
-    type = dictionary['type']
+    type = dictionary["type"]
     cipher = None
     if type == "Vigenere":
         if isinstance(dictionary['key'], str): 
             cipher =  getVigenereFromStr(dictionary['key'])
         else:
             cipher = VigenereCipher(dictionary['key'])
-    elif type == "Caeser":
+    elif type == "Caesar":
         cipher = CaesarCipher(dictionary['key'])
     return cipher
 
@@ -110,10 +110,6 @@ def loadEncryptionSystem(dir_path):
     encryptBool = isEncryptOn(dictionary)
     encryptorInstance = createEncryptorInstance(dictionary)
     desiredFileSuffix = ""
-    
-    # if(isinstance(encryptorInstance, VigenereCipher)):
-    #     print(encryptorInstance.keyList )
-    #     print(encryptorInstance.amountOfKeys)
 
     if encryptBool == True:
         desiredFileSuffix = ".txt"
