@@ -65,9 +65,9 @@ def getVigenereFromStr(key):
             continue
         #assuming character is an uppercase or lowercase letter
         base = ""
-        if character.isupper:
+        if character.isupper():
             base = "A"
-        if character.islower:
+        if character.islower():
             base = "a"
         keyIntList.append( (ord(character) - ord(base) ) % alphabetSize)
     return VigenereCipher(keyIntList)
