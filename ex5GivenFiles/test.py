@@ -1,4 +1,5 @@
-from ex5 import CaesarCipher, VigenereCipher, getVigenereFromStr, processDirectory
+from ex5 import CaesarCipher, VigenereCipher, getVigenereFromStr, loadEncryptionSystem
+import sys
 
 
 def test1():
@@ -21,7 +22,7 @@ def test5():
         return False
     return True 
 def test8():
-    processDirectory('.')
+    loadEncryptionSystem('.')
     with open('plain.enc', 'r') as out:
         with open('plain.out', 'r') as expected:
             if out.read() != expected.read():
@@ -29,9 +30,9 @@ def test8():
     return True 
 
 def run(funcs):
-'''
-this function runs all the function in main scope with the string "test" in their name
-'''
+    '''
+    this function runs all the function in main scope with the string "test" in their name
+    '''
     tests = [f for f in funcs if 'test' in f]
     if len(sys.argv) < 2:
         for test in tests:

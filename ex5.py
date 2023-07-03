@@ -17,14 +17,11 @@ lowerCaseList = "abcdefghijklmnopqrstuvwxyz"
 alphabetSize = len(lowerCaseList)
 
 def shift(letter, shiftAmount):
-    if not(letter.isalpha):
+    if not(letter.isalpha()):
         return letter
     alphabet = lowerCaseList
-    if letter.isupper:
-        isUpper = True
-        alphabet = lowerCaseList.upper
-    else:
-        isUpper = False
+    if letter.isupper():
+        alphabet = lowerCaseList.upper()
     shiftedLetterIndex = (alphabet.find(letter) + shiftAmount) % alphabetSize
     return alphabet[shiftedLetterIndex]
  
@@ -35,7 +32,7 @@ class CaesarCipher:
     def encrypt(self, stringToEncrypt):
         encryptedString = ""
         for character in stringToEncrypt:
-            encryptedString += shift(character)
+            encryptedString += shift(character, self.key)
         return encryptedString
 
     def decrypt(self, encryptedString):
@@ -52,8 +49,8 @@ class VigenereCipher:
         indexInList = 0
         for character in stringToEncrypt:
             encryptedString += shift(character, self.keyList[indexInList])
-            if character.isalpa:
-                indexInList = (self.keyList + 1) % self.amountOfKeys
+            if character.isalpha():
+                indexInList = (indexInList + 1) % self.amountOfKeys
         return encryptedString
     
     def decrypt(self, encryptedString):
@@ -64,15 +61,16 @@ class VigenereCipher:
 def getVigenereFromStr(key):
     keyIntList = []
     for character in key:
-        if not character.isalpha:
+        if not character.isalpha():
             continue
-        #assuming character is an uppercase of lowercase letter
+        #assuming character is an uppercase or lowercase letter
         base = ""
         if character.isupper:
             base = "A"
         if character.islower:
             base = "a"
         keyIntList.append( (ord(character) - ord(base) ) % alphabetSize)
+    return VigenereCipher(keyIntList)
 
 
 def createDictionary(listOfFiles, dir_path):
@@ -84,39 +82,53 @@ def createDictionary(listOfFiles, dir_path):
                 return loaded_dict
 
 def createEncryptorInstance(dictionary):
-    if dictionary["type"] == "Vigenere":
-        return VigenereCipher(dictionary["key"])
-    if dictionary["type"] == "Ceaser":
-        return CaesarCipher(dictionary["key"])
-    
+    type = dictionary['type']
+    cipher = None
+    if type == "Vigenere":
+        if isinstance(dictionary['key'], str): 
+            cipher =  getVigenereFromStr(dictionary['key'])
+        else:
+            cipher = VigenereCipher(dictionary['key'])
+    elif type == "Caeser":
+        cipher = CaesarCipher(dictionary['key'])
+    return cipher
+
 def isEncryptOn(dictionary):
-    if dictionary["encrypt"] == "True":
+    if dictionary['encrypt'] == "True":
         return True
     else:
         return False
 
 def encryptFile(fileToEncrypt, functionToPerform, outFile):
-    for line in fileToEncrypt:
-        outFile.write(outputLine = functionToPerform(line))
+    wholeFileLine = fileToEncrypt.read()
+    outFile.write(functionToPerform(wholeFileLine))
 
 def loadEncryptionSystem(dir_path):
     listOfFiles = os.listdir(dir_path)
     dictionary = createDictionary(listOfFiles, dir_path)
-    
+
     encryptBool = isEncryptOn(dictionary)
-    encryptionType = createEncryptorInstance(dictionary)
+    encryptorInstance = createEncryptorInstance(dictionary)
+    desiredFileSuffix = ""
+    
+    # if(isinstance(encryptorInstance, VigenereCipher)):
+    #     print(encryptorInstance.keyList )
+    #     print(encryptorInstance.amountOfKeys)
 
     if encryptBool == True:
-        desiredFileSuffix = ".enc"
-        outFileSuffix = ".txt"
-        functionToPerform = encryptionType.encrypt
-    else:
         desiredFileSuffix = ".txt"
         outFileSuffix = ".enc"
-        functionToPerform = encryptionType.decrypt
-
-    for file in listOfFiles and fileName.endswith(desiredFileSuffix):
-        fileName = os.path.join(dir_path, file)
-        with open(fileName, 'r') as fileToRead:
-            with open(os.path.join(dir_path, fileName.os.path.splitext(), outFileSuffix), 'w') as outFile:
-                encryptFile(fileToRead, functionToPerform, outFile)
+        functionToPerform = encryptorInstance.encrypt
+    else:
+        desiredFileSuffix = ".enc"
+        outFileSuffix = ".txt"
+        functionToPerform = encryptorInstance.decrypt
+    for file in listOfFiles:
+        # print(desiredFileSuffix)
+        if file.endswith(desiredFileSuffix):
+            fileName = os.path.join(dir_path, file)
+            with open(fileName, 'r') as fileToRead:
+                outFilePath = os.path.splitext(fileName)[0] + outFileSuffix 
+                # print(outFilePath)
+                with open(outFilePath, 'w') as outFile:
+                    encryptFile(fileToRead, functionToPerform, outFile)
