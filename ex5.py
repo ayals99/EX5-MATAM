@@ -27,8 +27,7 @@ def shift(letter, shiftAmount):
         isUpper = False
     shiftedLetterIndex = (alphabet.find(letter) + shiftAmount) % alphabetSize
     return alphabet[shiftedLetterIndex]
-    
-
+ 
 class CaesarCipher:
     def __init__(self, keyInput):
         CaesarCipher.key = keyInput
@@ -41,7 +40,7 @@ class CaesarCipher:
 
     def decrypt(self, encryptedString):
         reverseCypher = CaesarCipher(-1 * self.key) 
-        return reverseCypher.encrypt(encryptedString) #use encryt in order to not duplicate code 
+        return reverseCypher.encrypt(encryptedString)  #use encryt in order to not duplicate code 
     
 class VigenereCipher:
     def __init__(self, listOfNumbers):
@@ -84,7 +83,7 @@ def createDictionary(listOfFiles, dir_path):
                 loaded_dict = json.load(JSONfile)
                 return loaded_dict
 
-def createEncryptor(dictionary):
+def createEncryptorInstance(dictionary):
     if dictionary["type"] == "Vigenere":
         return VigenereCipher(dictionary["key"])
     if dictionary["type"] == "Ceaser":
@@ -96,28 +95,28 @@ def isEncryptOn(dictionary):
     else:
         return False
 
-def encryptFile(fileToEncrypt, encryptBool, encryptionFunction, outFile):
+def encryptFile(fileToEncrypt, functionToPerform, outFile):
     for line in fileToEncrypt:
-        if(encryptBool == True):
-            outFile += encryptionFunction.encrypt(line)
-        else:
-            outFile += encryptionFunction.decrypt(line)
+        outFile.write(outputLine = functionToPerform(line))
 
 def loadEncryptionSystem(dir_path):
     listOfFiles = os.listdir(dir_path)
     dictionary = createDictionary(listOfFiles, dir_path)
     
     encryptBool = isEncryptOn(dictionary)
-    encryptionFunction = createEncryptor(dictionary)
+    encryptionType = createEncryptorInstance(dictionary)
 
-    for file in listOfFiles:
+    if encryptBool == True:
+        desiredFileSuffix = ".enc"
+        outFileSuffix = ".txt"
+        functionToPerform = encryptionType.encrypt
+    else:
+        desiredFileSuffix = ".txt"
+        outFileSuffix = ".enc"
+        functionToPerform = encryptionType.decrypt
+
+    for file in listOfFiles and fileName.endswith(desiredFileSuffix):
         fileName = os.path.join(dir_path, file)
-        if (fileName.endswith(".enc")):
-            with open(fileName, 'r') as fileToEncrypt:
-                with open(os.path.join(dir_path, fileName.os.path.splitext()  ,".txt"), 'w+') as outFile:
-                    encryptFile(fileToEncrypt, encryptBool, encryptionFunction, outFile)
-        
-        if (fileName.endswith(".txt")):
-            with open(fileName, 'r') as fileTo:
-                with open(os.path.join(dir_path), 'w+') as outFile:
-                    encryptFile(fileToEncrypt, encryptBool, encryptionFunction, outFile)
+        with open(fileName, 'r') as fileToRead:
+            with open(os.path.join(dir_path, fileName.os.path.splitext(), outFileSuffix), 'w') as outFile:
+                encryptFile(fileToRead, functionToPerform, outFile)
