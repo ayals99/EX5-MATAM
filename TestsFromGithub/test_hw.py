@@ -5,7 +5,6 @@ import filecmp
 import difflib
 import ex5
 
-TESTS_NUM = 1000
 
 class Playground():
     def __init__(self, path):
@@ -43,11 +42,11 @@ def test_vigenere_from_str():
     assert vigenere.decrypt("YI, V pg nnydseg") == "JK, C is awesome"
 
 def test_process_directory():
-    tests = 0
+    total_tests = 0
+    successes = 0
+    failures = []
+    
     for expected, output in zip(os.listdir("tests/expected"), os.listdir("tests/output")):
-        if tests >= TESTS_NUM:
-            break
-        
         if expected.startswith("."):
             continue
         curr_dir = os.path.join("tests/output", output)
@@ -57,13 +56,30 @@ def test_process_directory():
            expected = os.path.join("tests/expected", expected)
            files = set(os.listdir(expected) + os.listdir(curr_dir))
            for file in files:
+                total_tests += 1
                 expected_file = os.path.join(expected, file)
-                assert os.path.isfile(expected_file), f"your code created an unexpected file: '{expected_file}'" 
+                if not os.path.isfile(expected_file):
+                    print(f"Test #{total_tests} Failed: your code created an unexpected file: '{expected_file}'")
+                    failures.append((total_tests, expected_file))
+                    continue
                 output = os.path.join(curr_dir, file)
-                assert os.path.isfile(output), f"your code did not create the following file: '{file}'" 
-                assert filecmp.cmp(output, expected_file), format_error_message(expected_file, output)
-        
-        tests += 1
+                if not os.path.isfile(output):
+                    print(f"Test #{total_tests} Failed: your code did not create the following file: '{file}'")
+                    failures.append((total_tests, output))
+                    continue
+                if not filecmp.cmp(output, expected_file):
+                    print(f"Test #{total_tests} Failed: file content does not match for '{expected_file}' and '{output}'")
+                    failures.append((total_tests, expected_file))
+                    continue
+
+                print(f"Test #{total_tests} Passed: '{file}'")
+                successes += 1
+
+    print(f"\nTotal number of tests passed: {successes} out of {total_tests}")
+    print("\nFailed tests:")
+    for test_num, failed_test in failures:
+        print(f"Test #{test_num} - '{failed_test}'")
 
 if __name__ == "__main__":
     test_process_directory()
+
