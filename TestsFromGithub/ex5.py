@@ -2,19 +2,17 @@
 import os
 import sys
 import json
-
-lowerCaseList = "abcdefghijklmnopqrstuvwxyz"
-alphabetSize = len(lowerCaseList)
-
+alphabetSize = 26
+ 
 def shift(letter, shiftAmount):
     if not(letter.isalpha()):
         return letter
-    alphabet = lowerCaseList
+    baseASCIIValue = ord('a')
     if letter.isupper():
-        alphabet = lowerCaseList.upper()
-    shiftedLetterIndex = (alphabet.find(letter) + shiftAmount) % alphabetSize
-    return alphabet[shiftedLetterIndex]
- 
+        baseASCIIValue = ord('A')
+    shiftedLetterASCII = (ord(letter) - baseASCIIValue + shiftAmount) % alphabetSize
+    return chr(shiftedLetterASCII + baseASCIIValue)
+
 class CaesarCipher:
     def __init__(self, keyInput):
         self.key = keyInput
@@ -62,7 +60,7 @@ def getVigenereFromStr(key):
 
 def createDictionary(listOfFiles, dir_path):
     for file in listOfFiles:
-        if file.endswith(".json"):
+        if os.path.splitext(file)[1] == ".json":
             fileName = os.path.join(dir_path, file)
             with open(fileName, 'r') as jsonfile:
                 loadedDictionary = json.load(jsonfile)
@@ -99,7 +97,7 @@ def loadEncryptionSystem(dir_path):
     outFileSuffix = ".enc" if encryptBool else ".txt"
 
     for file in listOfFiles:
-        if file.endswith(desiredFileSuffix):
+        if os.path.splitext(file)[1] == desiredFileSuffix:
             fileName = os.path.join(dir_path, file)
             with open(fileName, 'r') as fileToRead:
                 outFilePath = os.path.splitext(fileName)[0] + outFileSuffix 
