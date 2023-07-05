@@ -3,16 +3,6 @@ import os
 import sys
 import json
 
-# import unittest
-# class TestCeaserShift(unittest.TestCase):
-#     def testLowerCase(self):
-#         caesar1 = CaesarCipher('abc', 3,)
-#         self.assertEqual(caesar1.encrypt, "cde", "Should be 'cde'")
-
-#     def testTupleLowerCase(self):
-#         self.assertEqual()
-
-# Part 1:
 lowerCaseList = "abcdefghijklmnopqrstuvwxyz"
 alphabetSize = len(lowerCaseList)
 

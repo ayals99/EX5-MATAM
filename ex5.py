@@ -27,7 +27,7 @@ def shift(letter, shiftAmount):
  
 class CaesarCipher:
     def __init__(self, keyInput):
-        CaesarCipher.key = keyInput
+        self.key = keyInput
 
     def encrypt(self, stringToEncrypt):
         encryptedString = ""
@@ -61,15 +61,12 @@ class VigenereCipher:
 def getVigenereFromStr(key):
     keyIntList = []
     for character in key:
-        if not character.isalpha():
-            continue
-        #assuming character is an uppercase or lowercase letter
-        base = ""
-        if character.isupper():
-            base = "A"
-        if character.islower():
-            base = "a"
-        keyIntList.append( (ord(character) - ord(base) ) % alphabetSize)
+        if character.isalpha():
+            if character.isupper():
+                base = "A"
+            else:
+                base = "a"
+            keyIntList.append(ord(character) - ord(base))
     return VigenereCipher(keyIntList)
 
 
@@ -77,27 +74,24 @@ def createDictionary(listOfFiles, dir_path):
     for file in listOfFiles:
         if file.endswith(".json"):
             fileName = os.path.join(dir_path, file)
-            with open(fileName, 'r') as JSONfile:
-                loaded_dict = json.load(JSONfile)
-                return loaded_dict
+            with open(fileName, 'r') as jsonfile:
+                loadedDictionary = json.load(jsonfile)
+                return loadedDictionary
 
 def createEncryptorInstance(dictionary):
-    type = dictionary["type"]
+    typeOfEncryption = dictionary["type"]
     cipher = None
-    if type == "Vigenere":
+    if typeOfEncryption == "Vigenere":
         if isinstance(dictionary['key'], str): 
-            cipher =  getVigenereFromStr(dictionary['key'])
+            cipher = getVigenereFromStr(dictionary['key'])
         else:
             cipher = VigenereCipher(dictionary['key'])
-    elif type == "Caesar":
+    elif typeOfEncryption == "Caesar":
         cipher = CaesarCipher(dictionary['key'])
     return cipher
 
 def isEncryptOn(dictionary):
-    if dictionary['encrypt'] == "True":
-        return True
-    else:
-        return False
+    return dictionary.get('encrypt') == "True"
 
 def encryptFile(fileToEncrypt, functionToPerform, outFile):
     wholeFileLine = fileToEncrypt.read()
@@ -109,22 +103,15 @@ def loadEncryptionSystem(dir_path):
 
     encryptBool = isEncryptOn(dictionary)
     encryptorInstance = createEncryptorInstance(dictionary)
-    desiredFileSuffix = ""
 
-    if encryptBool == True:
-        desiredFileSuffix = ".txt"
-        outFileSuffix = ".enc"
-        functionToPerform = encryptorInstance.encrypt
-    else:
-        desiredFileSuffix = ".enc"
-        outFileSuffix = ".txt"
-        functionToPerform = encryptorInstance.decrypt
+    functionToPerform = encryptorInstance.encrypt if encryptBool else encryptorInstance.decrypt
+    desiredFileSuffix = ".txt" if encryptBool else ".enc"
+    outFileSuffix = ".enc" if encryptBool else ".txt"
+
     for file in listOfFiles:
-        # print(desiredFileSuffix)
         if file.endswith(desiredFileSuffix):
             fileName = os.path.join(dir_path, file)
             with open(fileName, 'r') as fileToRead:
                 outFilePath = os.path.splitext(fileName)[0] + outFileSuffix 
-                # print(outFilePath)
                 with open(outFilePath, 'w') as outFile:
                     encryptFile(fileToRead, functionToPerform, outFile)
